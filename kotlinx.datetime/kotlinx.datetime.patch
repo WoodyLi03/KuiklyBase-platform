@@ -1,0 +1,1201 @@
+Subject: [PATCH] 
+修改发布信息对外开源
+---
+Index: benchmarks/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/benchmarks/build.gradle.kts b/benchmarks/build.gradle.kts
+--- a/benchmarks/build.gradle.kts	(revision cc8121a6f677125f2cbaa0537efd60fa6a14ce2e)
++++ b/benchmarks/build.gradle.kts	(revision 5a0aa6735c8b5696056c780a15f1a19e8681602e)
+@@ -30,5 +30,16 @@
+ }
+ 
+ repositories {
++
+     mavenCentral()
++    mavenLocal()
++    maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++    maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++    maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
++    maven ("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++    maven ("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++    maven ("https://mirrors.tencent.com/repository/maven/tencent_public")
++    maven ("https://maven.oa.com/nexus/content/groups/androidbuild/")
++    maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
+ }
+Index: build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle.kts b/build.gradle.kts
+--- a/build.gradle.kts	(revision cc8121a6f677125f2cbaa0537efd60fa6a14ce2e)
++++ b/build.gradle.kts	(revision f5b9ef4860a1dd9edcda8d00445accb90ef8ce65)
+@@ -1,27 +1,62 @@
+ plugins {
+     id("kotlinx.team.infra") version "0.4.0-dev-81"
+     kotlin("multiplatform") apply false
++    id("com.android.library").version("8.1.0").apply(false)
+ }
++buildscript {
++    repositories {
++        mavenLocal()
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tencent_public")
++        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++        maven("https://mirrors.tencent.com/repository/maven/tassistant")
++        maven("https://maven.oa.com/nexus/content/groups/androidbuild/")
++        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
++        google()
++        mavenCentral()
++        gradlePluginPortal()
++    }
+ 
++}
+ infra {
+     teamcity {
+     }
+-    publishing {
+-        include(":kotlinx-datetime")
+-        libraryRepoUrl = "https://github.com/Kotlin/kotlinx-datetime"
+-        sonatype {
+-            libraryStagingRepoDescription = project.name
+-        }
+-    }
++//    publishing {
++//        include(":kotlinx-datetime")
++//        libraryRepoUrl = "https://github.com/Kotlin/kotlinx-datetime")
++//        sonatype {
++//            libraryStagingRepoDescription = project.name
++//        }
++//    }
+ }
+ 
+ val mainJavaToolchainVersion by ext(project.property("java.mainToolchainVersion"))
+ val modularJavaToolchainVersion by ext(project.property("java.modularToolchainVersion"))
+ 
++//buildscript {
++//    dependencies {
++//        classpath("com.android.tools.build:gradle:8.1.0")
++//    }
++//}
++
+ allprojects {
+     repositories {
+         addTrainRepositories(project)
++        maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
++        maven ("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++        maven ("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++        maven ("https://mirrors.tencent.com/repository/maven/tencent_public")
++        maven ("https://maven.oa.com/nexus/content/groups/androidbuild/")
++        maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
+         mavenCentral()
++        mavenLocal()
+     }
+     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+         // outputs the compiler version to logs so we can check whether the train configuration applied
+@@ -40,3 +75,4 @@
+ tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
+     args.add("--ignore-engines")
+ }
++
+Index: buildSrc/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/buildSrc/build.gradle.kts b/buildSrc/build.gradle.kts
+--- a/buildSrc/build.gradle.kts	(revision cc8121a6f677125f2cbaa0537efd60fa6a14ce2e)
++++ b/buildSrc/build.gradle.kts	(revision 5a0aa6735c8b5696056c780a15f1a19e8681602e)
+@@ -30,7 +30,17 @@
+     }
+ 
+ repositories {
++    maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++    maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++    maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
++    maven ("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++    maven ("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++    maven ("https://mirrors.tencent.com/repository/maven/tencent_public")
++//    maven ("https://maven.oa.com/nexus/content/groups/androidbuild/")
++    maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
+     mavenCentral()
++    mavenLocal()
+     gradlePluginPortal()
+     addTrainRepositories(project)
+ }
+@@ -38,5 +48,18 @@
+ dependencies {
+     fun gradlePlugin(id: String, version: String): String = "$id:$id.gradle.plugin:$version"
+     implementation(gradlePlugin("org.jetbrains.kotlin.multiplatform", kotlinVersion))
++//    // 是否为iOS平台（区分iOS平台应用不同插件版本）
++//    val isIosTargetPlatform = project.hasProperty("targetPlatform")
++//            && project.property("targetPlatform") == "iOS"
++//    val isIosTargetTask = gradle.startParameter.taskNames.any {
++//        it.contains("podPublish") || it.contains("podspec") || it.contains("syncFramework")
++//    }
++//    if (isIosTargetPlatform || isIosTargetTask) {
++////        implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.0.21-deviOS-105")
++//        implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21-deviOS-105")
++//    } else {
++////        implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.0.21-dev-107")
++//        implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21-dev-107")
++//    }
+     implementation(gradlePlugin("org.jetbrains.kotlin.plugin.serialization", kotlinVersion))
+ }
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle.properties b/gradle.properties
+--- a/gradle.properties	(revision cc8121a6f677125f2cbaa0537efd60fa6a14ce2e)
++++ b/gradle.properties	(revision 5a0aa6735c8b5696056c780a15f1a19e8681602e)
+@@ -2,12 +2,14 @@
+ org.gradle.java.installations.fromEnv=JDK_8
+ 
+ group=org.jetbrains.kotlinx
+-version=0.6.0-RC.2
++version=0.6.5-kn
+ versionSuffix=SNAPSHOT
+ 
+-defaultKotlinVersion=1.9.21
++defaultKotlinVersion=2.0.21-dev-107
++#defaultKotlinVersion=1.9.23-dev-208
++defaultKotlinIOSVersion=2.0.21-deviOS-105
+ dokkaVersion=1.9.10
+-serializationVersion=1.6.2
++serializationVersion=1.6.6-dev
+ benchmarksVersion=0.7.2
+ 
+ java.mainToolchainVersion=8
+@@ -24,3 +26,18 @@
+ 
+ # stop using pre-HMPP IDEA import workaround in kotlinx.team.infra
+ useNativeBuildInfraInIdea=true
++
++#???GroupId
++MAVEN_GROUP=org.jetbrains.kotlinx
++
++#???version
++
++#???artifactId???????? ${module.name}?
++UPLOAD_ARCHIVES_MODULE_PLATFORM_EXT=kotlinx-datetime
++
++MAVEN_TYPE=MAVEN_PUBLISH
++
++ARTIFACT_NAME=kotlinx-datetime
++
++#???version
++MAVEN_VERSION=0.6.5-kn
+Index: settings.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+--- a/settings.gradle.kts	(revision cc8121a6f677125f2cbaa0537efd60fa6a14ce2e)
++++ b/settings.gradle.kts	(revision f5b9ef4860a1dd9edcda8d00445accb90ef8ce65)
+@@ -1,6 +1,17 @@
+ pluginManagement {
+     repositories {
+-        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
++        mavenLocal()
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tencent_public")
++        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++        maven("https://mirrors.tencent.com/repository/maven/tassistant")
++        maven("https://maven.oa.com/nexus/content/groups/androidbuild/")
++        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
++        google()
+         mavenCentral()
+         gradlePluginPortal()
+     }
+@@ -9,6 +20,43 @@
+     plugins {
+         id("org.jetbrains.dokka") version dokkaVersion
+         id("me.champeau.jmh") version benchmarksVersion
++//        id("easy-publish").version("1.5.0.11").apply(false)
++    }
++}
++buildscript {
++    repositories {
++        mavenLocal()
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tencent_public")
++        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++        maven("https://mirrors.tencent.com/repository/maven/tassistant")
++        maven("https://maven.oa.com/nexus/content/groups/androidbuild/")
++        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
++        google()
++        mavenCentral()
++        gradlePluginPortal()
++    }
++}
++dependencyResolutionManagement {
++    repositories {
++        mavenLocal()
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++        maven("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++        maven("https://mirrors.tencent.com/repository/maven/tencent_public")
++        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++        maven("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++        maven("https://mirrors.tencent.com/repository/maven/tassistant")
++        maven("https://maven.oa.com/nexus/content/groups/androidbuild/")
++        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
++        google()
++        mavenCentral()
++        gradlePluginPortal()
+     }
+ }
+ 
+Index: core/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/build.gradle.kts b/core/build.gradle.kts
+--- a/core/build.gradle.kts	(revision 8d54af7cf5c30348788e51d0abe0b861b5f17d83)
++++ b/core/build.gradle.kts	(revision f96d98e39bdac1888a120683225f43c6dff0cdba)
+@@ -11,13 +11,46 @@
+     kotlin("multiplatform")
+     kotlin("plugin.serialization")
+     id("org.jetbrains.dokka")
++//    id("easy-publish")
++//    id("com.android.library")
+     `maven-publish`
+ }
++group = project.properties["MAVEN_GROUP"]!!
++version = "0.6.5-KBA-001"
+ 
++publishing {
++   repositories {
++        maven {
++            credentials {
++                username = "xxxxx"
++                password = "xxxxx"
++            }
++            url = uri("xxxxx")
++        }
++    }
++}
+ mavenPublicationsPom {
+     description.set("Kotlin Datetime Library")
+ }
+ 
++
++repositories {
++    maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++    maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++    maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
++    maven ("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++    maven ("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++    maven ("https://mirrors.tencent.com/repository/maven/tencent_public")
++    maven ("https://maven.oa.com/nexus/content/groups/androidbuild/")
++    maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++    google()
++    mavenCentral()
++    mavenLocal()
++}
++
+ base {
+     archivesBaseName = "kotlinx-datetime" // doesn't work
+ }
+@@ -45,8 +78,9 @@
+                     target("linuxX64")
+                     // Tier 2
+                     target("linuxArm64")
+-                    // Tier 4 (deprecated, but still in demand)
+-                    target("linuxArm32Hfp")
++//                    // Tier 4 (deprecated, but still in demand)
++//                    target("linuxArm32Hfp")
++
+                 }
+                 common("darwin") {
+                     common("darwinDevices") {
+@@ -128,6 +162,8 @@
+         }
+     }
+ 
++    ohosArm64 {}
++
+     @OptIn(ExperimentalKotlinGradlePluginApi::class)
+     compilerOptions {
+         freeCompilerArgs.add("-Xexpect-actual-classes")
+@@ -160,8 +196,9 @@
+             }
+ 
+             konanTarget.family == org.jetbrains.kotlin.konan.target.Family.LINUX ||
+-                konanTarget.family == org.jetbrains.kotlin.konan.target.Family.ANDROID ||
+-                konanTarget.family.isAppleFamily ->
++                    konanTarget.family == org.jetbrains.kotlin.konan.target.Family.OHOS ||
++                    konanTarget.family == org.jetbrains.kotlin.konan.target.Family.ANDROID ||
++                    konanTarget.family.isAppleFamily ->
+             {
+                 // do nothing special
+             }
+@@ -184,6 +221,9 @@
+         }
+ 
+         val jvmMain by getting {
++            dependencies {
++                api("com.jakewharton.threetenabp:threetenabp:1.4.7")
++            }
+         }
+ 
+         val jvmTest by getting {
+@@ -235,75 +275,87 @@
+ 
+         val darwinTest by getting {
+         }
++
++        val ohosArm64Main by getting {
++            kotlin.srcDir(projectDir.absolutePath + "/ohosArm64Main/src")
++            dependsOn(nativeMain)
++            dependencies {
++                implementation("com.tencent.tmm:tmm-platform-utils:0.0.17")
++            }
++        }
+     }
+ }
+ 
++//android {
++//    namespace = "com.tencent.kmm.component.kotlinx-datetime"
++//    compileSdk = 33
++//}
+ tasks {
+     val jvmTest by existing(Test::class) {
+         // maxHeapSize = "1024m"
+     }
+ 
+-    val compileJavaModuleInfo by registering(JavaCompile::class) {
+-        val moduleName = "kotlinx.datetime" // this module's name
+-        val compileKotlinJvm by getting(KotlinCompile::class)
+-        val sourceDir = file("jvm/java9/")
+-        val targetDir = compileKotlinJvm.destinationDirectory.map { it.dir("../java9/") }
+-
+-        // Use a Java 11 compiler for the module info.
+-        javaCompiler.set(project.javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(modularJavaToolchainVersion)) })
+-
+-        // Always compile kotlin classes before the module descriptor.
+-        dependsOn(compileKotlinJvm)
+-
+-        // Add the module-info source file.
+-        source(sourceDir)
+-
+-        // Also add the module-info.java source file to the Kotlin compile task.
+-        // The Kotlin compiler will parse and check module dependencies,
+-        // but it currently won't compile to a module-info.class file.
+-        // Note that module checking only works on JDK 9+,
+-        // because the JDK built-in base modules are not available in earlier versions.
+-        val javaVersion = compileKotlinJvm.kotlinJavaToolchain.javaVersion.getOrNull()
+-        if (javaVersion?.isJava9Compatible == true) {
+-            logger.info("Module-info checking is enabled; $compileKotlinJvm is compiled using Java $javaVersion")
+-            compileKotlinJvm.source(sourceDir)
+-        } else {
+-            logger.info("Module-info checking is disabled")
+-        }
+-
+-        // Set the task outputs and destination dir
+-        outputs.dir(targetDir)
+-        destinationDirectory.set(targetDir)
+-
+-        // Configure JVM compatibility
+-        sourceCompatibility = JavaVersion.VERSION_1_9.toString()
+-        targetCompatibility = JavaVersion.VERSION_1_9.toString()
+-
+-        // Set the Java release version.
+-        options.release.set(9)
+-
+-        // Ignore warnings about using 'requires transitive' on automatic modules.
+-        // not needed when compiling with recent JDKs, e.g. 17
+-        options.compilerArgs.add("-Xlint:-requires-transitive-automatic")
+-
+-        // Patch the compileKotlinJvm output classes into the compilation so exporting packages works correctly.
+-        options.compilerArgs.addAll(listOf("--patch-module", "$moduleName=${compileKotlinJvm.destinationDirectory.get()}"))
+-
+-        // Use the classpath of the compileKotlinJvm task.
+-        // Also ensure that the module path is used instead of classpath.
+-        classpath = compileKotlinJvm.libraries
+-        modularity.inferModulePath.set(true)
+-    }
+-
+-    // Configure the JAR task so that it will include the compiled module-info class file.
+-    val jvmJar by existing(Jar::class) {
+-        manifest {
+-            attributes("Multi-Release" to true)
+-        }
+-        from(compileJavaModuleInfo.map { it.destinationDirectory }) {
+-            into("META-INF/versions/9/")
+-        }
+-    }
++//    val compileJavaModuleInfo by registering(JavaCompile::class) {
++//        val moduleName = "kotlinx.datetime" // this module's name
++//        val compileKotlinJvm by getting(KotlinCompile::class)
++//        val sourceDir = file("jvm/java9/")
++//        val targetDir = compileKotlinJvm.destinationDirectory.map { it.dir("../java9/") }
++//
++//        // Use a Java 11 compiler for the module info.
++//        javaCompiler.set(project.javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(modularJavaToolchainVersion)) })
++//
++//        // Always compile kotlin classes before the module descriptor.
++//        dependsOn(compileKotlinJvm)
++//
++//        // Add the module-info source file.
++//        source(sourceDir)
++//
++//        // Also add the module-info.java source file to the Kotlin compile task.
++//        // The Kotlin compiler will parse and check module dependencies,
++//        // but it currently won't compile to a module-info.class file.
++//        // Note that module checking only works on JDK 9+,
++//        // because the JDK built-in base modules are not available in earlier versions.
++//        val javaVersion = compileKotlinJvm.kotlinJavaToolchain.javaVersion.getOrNull()
++//        if (javaVersion?.isJava9Compatible == true) {
++//            logger.info("Module-info checking is enabled; $compileKotlinJvm is compiled using Java $javaVersion")
++//            compileKotlinJvm.source(sourceDir)
++//        } else {
++//            logger.info("Module-info checking is disabled")
++//        }
++//
++//        // Set the task outputs and destination dir
++//        outputs.dir(targetDir)
++//        destinationDirectory.set(targetDir)
++//
++//        // Configure JVM compatibility
++//        sourceCompatibility = JavaVersion.VERSION_1_9.toString()
++//        targetCompatibility = JavaVersion.VERSION_1_9.toString()
++//
++//        // Set the Java release version.
++//        options.release.set(9)
++//
++//        // Ignore warnings about using 'requires transitive' on automatic modules.
++//        // not needed when compiling with recent JDKs, e.g. 17
++//        options.compilerArgs.add("-Xlint:-requires-transitive-automatic")
++//
++//        // Patch the compileKotlinJvm output classes into the compilation so exporting packages works correctly.
++//        options.compilerArgs.addAll(listOf("--patch-module", "$moduleName=${compileKotlinJvm.destinationDirectory.get()}"))
++//
++//        // Use the classpath of the compileKotlinJvm task.
++//        // Also ensure that the module path is used instead of classpath.
++//        classpath = compileKotlinJvm.libraries
++//        modularity.inferModulePath.set(true)
++//    }
++//
++//    // Configure the JAR task so that it will include the compiled module-info class file.
++//    val jvmJar by existing(Jar::class) {
++//        manifest {
++//            attributes("Multi-Release" to true)
++//        }
++//        from(compileJavaModuleInfo.map { it.destinationDirectory }) {
++//            into("META-INF/versions/9/")
++//        }
++//    }
+ 
+     // Workaround for https://youtrack.jetbrains.com/issue/KT-58303:
+     // the `clean` task can't delete the expanded.lock file on Windows as it's still held by Gradle, failing the build
+Index: serialization/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/serialization/build.gradle.kts b/serialization/build.gradle.kts
+--- a/serialization/build.gradle.kts	(revision 271ceb41e7decf68c6bc2497524ea2fd78692c0b)
++++ b/serialization/build.gradle.kts	(revision 5a0aa6735c8b5696056c780a15f1a19e8681602e)
+@@ -12,11 +12,26 @@
+     toolchain { languageVersion.set(JavaLanguageVersion.of(mainJavaToolchainVersion)) }
+ }
+ 
++repositories {
++    mavenLocal()
++    mavenCentral()
++    google()
++    maven("https://mirrors.tencent.com/repository/maven/tencentvideo")
++    maven("https://mirrors.tencent.com/repository/maven/thirdparty")
++    maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
++    maven ("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++    maven ("https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++    maven ("https://mirrors.tencent.com/repository/maven/tencent_public")
++    maven ("https://maven.oa.com/nexus/content/groups/androidbuild/")
++    maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlinx/maven")
++}
++
+ kotlin {
+     infra {
+         target("linuxX64")
+         target("linuxArm64")
+-        target("linuxArm32Hfp")
++//        target("linuxArm32Hfp")
+         target("mingwX64")
+         target("macosX64")
+         target("macosArm64")
+@@ -31,6 +46,7 @@
+         target("tvosArm64")
+         target("tvosX64")
+         target("tvosSimulatorArm64")
++        target("ohosArm64")
+     }
+ 
+     jvm {
+@@ -89,20 +105,22 @@
+         val jvmTest by getting
+ 
+         val jsMain by getting
+-        val jsTest by getting {
+-            dependencies {
+-                implementation(npm("@js-joda/timezone", "2.3.0"))
+-            }
+-        }
++//        val jsTest by getting {
++//            dependencies {
++//                implementation(npm("@js-joda/timezone", "2.3.0"))
++//            }
++//        }
+ 
+         val wasmJsMain by getting
+-        val wasmJsTest by getting {
+-            dependencies {
+-                implementation(npm("@js-joda/timezone", "2.3.0"))
+-            }
+-        }
++//        val wasmJsTest by getting {
++//            dependencies {
++//                implementation(npm("@js-joda/timezone", "2.3.0"))
++//            }
++//        }
+ 
+         val nativeMain by getting
+         val nativeTest by getting
+     }
+-}
+\ No newline at end of file
++}
++
++
+Index: core/ohosArm64Main/src/internal/TimeZoneNative.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/ohosArm64Main/src/internal/TimeZoneNative.kt b/core/ohosArm64Main/src/internal/TimeZoneNative.kt
+new file mode 100644
+--- /dev/null	(revision 18490d993260293e76e1f3d55977fac71230fe84)
++++ b/core/ohosArm64Main/src/internal/TimeZoneNative.kt	(revision 18490d993260293e76e1f3d55977fac71230fe84)
+@@ -0,0 +1,32 @@
++package kotlinx.datetime.internal
++
++import com.tencent.tmm.timezone.TimeZoneManager
++import kotlinx.datetime.UtcOffset
++
++
++/***
++ * 通过 knoi 桥接回 ArkTS 获取时区实现
++ * 后续 HuaWei 提供 Native 接口可替换会 Native 实现
++ */
++internal actual val systemTzdb: TimeZoneDatabase get() = tzdb.getOrThrow()
++
++private val tzdb = runCatching {
++    OhosTimeZoneDatabase()
++}
++
++internal actual fun currentSystemDefaultZone(): Pair<String, TimeZoneRules?> {
++    val zone = TimeZoneManager.getDefaultTimeZone()
++    zone.rawOffset
++    val rules = TimeZoneRules(emptyList(), listOf(UtcOffset(seconds = zone.rawOffset / 1000)), null)
++    return zone.id to rules
++}
++
++internal class OhosTimeZoneDatabase : TimeZoneDatabase {
++    override fun rulesForId(id: String): TimeZoneRules {
++        val zone = TimeZoneManager.getTimeZone(id)
++        return TimeZoneRules(emptyList(), listOf(UtcOffset(seconds = zone.rawOffset / 1000)), null)
++    }
++
++    override fun availableTimeZoneIds(): Set<String> = TimeZoneManager.getAvailableIDs().toSet()
++
++}
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision 18490d993260293e76e1f3d55977fac71230fe84)
++++ b/.gitignore	(revision 5a0aa6735c8b5696056c780a15f1a19e8681602e)
+@@ -6,3 +6,6 @@
+ build
+ /local.properties
+ benchmarks.jar
++
++/autopushremote/*
++.kotlin
+Index: master_push.sh
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/master_push.sh b/master_push.sh
+new file mode 100755
+--- /dev/null	(revision e64bb3f751e9ad5f6d573d811f6ef65bcc6b8c1d)
++++ b/master_push.sh	(revision e64bb3f751e9ad5f6d573d811f6ef65bcc6b8c1d)
+@@ -0,0 +1,193 @@
++#!/bin/sh
++
++# 入参个数
++PARAM_COUNT=$#
++# 入参列表
++PARAM_LIST=$@
++# AutoPush版本信息
++AP_VERSION="v2.1.5"
++
++# 获取当前路径的跟路径, 方便读写git hook里的文件
++GIT_PATH=$(git rev-parse --show-toplevel)
++
++# 文件夹名称
++AUTO_TMP_NAME="autopushremote"
++# 主干开发和feature分支开发脚本存储的地方
++AUTO_TMP="${GIT_PATH}/${AUTO_TMP_NAME}"
++# feature分支开发脚本
++AUTO_PATH="${AUTO_TMP}/autopush_remote.sh"
++# 主干开发脚本路径
++AUTO_MASTER_PATH="${AUTO_TMP}/autopush_master.sh"
++
++export TAPD_TOKEN="auto_ovb:698854E8-30BF-7E66-6BC1-F742E3FF510F"
++
++export TAPD_PROJECT_ID="10078431"
++
++function main()
++{
++    echo "当前版本:$AP_VERSION"
++    # 检查入参判定是主干开发还是feature开发
++    checkParam
++}
++
++
++# 检查入参
++function checkParam()
++{
++    # 通过判断参数个数决定执行的脚本
++    if [[ $PARAM_COUNT -lt 1 ]] ;then
++        # 非主干开发,使用旧的feature分支开发.
++        runAutopushRemote
++    else
++        # 此处执行新的主干开发逻辑
++        runAutopushMaster
++
++    fi
++}
++
++# 下载主干开发脚本
++function runAutopushMaster()
++{
++    # 下载主干开发脚本 并执行
++    local url="http://dldir1.qq.com/qqmi/script/autopush/1.0.1/autopush_master.sh"
++    runRemote "autopush_master.sh" "${AUTO_MASTER_PATH}" "${url}" ${PARAM_LIST}
++}
++
++# 下载feature分支开发脚本
++function runAutopushRemote()
++{
++    # 下载脚本 并执行
++    url="http://dldir1.qq.com/qqmi/script/autopush/1.0.0/autopush_remote.sh"
++    runRemote "autopush_remote.sh" "${AUTO_PATH}" "${url}" ${PARAM_LIST}
++}
++
++# 执行远端脚本
++function runRemote()
++{
++    # 脚本名称
++    local sh_name=${1}
++    # 脚本路径
++    local path=${2}
++    # 脚本的url
++    local url=${3}
++    # 脚本需要的参数
++    local params=${4}
++    # 下载脚本
++    downloadScript "${sh_name}" "${path}" "${url}"
++    # 执行脚本
++    excuteScript "${path}" ${params}
++}
++
++# 下载脚本
++# 为了避免网络问题引起的下载文件见不全的问题,这里下载之后判断如果文件内容不为空则替换,否则使用缓存文件
++function downloadScript()
++{
++    # 脚本名称
++    local sh_name=${1}
++    # 脚本路径
++    local path=${2}
++    # 脚本的url
++    local url=${3}
++
++    # 创建存储文件夹
++    newDirIfNeed ${AUTO_TMP}
++
++    # 创建临时存储文件夹
++    local download_tmp="tmp_download"
++    newDirIfNeed $download_tmp
++
++    # 下载文件到临时文件夹
++    download "$sh_name" "$download_tmp/$sh_name" "$url"
++
++    # 判断下载的脚本文件是否为空
++    check_file_null "$download_tmp/$sh_name"
++
++    local file_exist=$?
++    if [[ $file_exist -eq 0 ]];then
++        echo "文件下载成功,删除旧文件:$path"
++        rm -rf $path
++        echo "移动文件到制定目录:${AUTO_TMP}"
++        mv -f $download_tmp/$sh_name ${AUTO_TMP}
++    fi
++
++    echo "删除临时文件夹:$download_tmp"
++    rm -rf $download_tmp
++}
++
++# 执行脚本
++function excuteScript()
++{
++    # 脚本路径
++    local path=${1}
++    # 脚本参数
++    local params=${2}
++
++    # 判断脚本路径是否存在
++    if [[ ! -f ${path} ]]; then
++        echo "${path} 不存在"
++        exit 1
++    fi
++    echo "开始执行autopush脚本"
++    sh $path $PARAM_LIST
++}
++
++# 检查文件是否为空
++function check_file_null()
++{
++    # 文件路径
++    local file_path=${1}
++    if [[ -z $file_path ]];then
++        echo "下载路径不存在"
++        return 1
++    fi
++    # 获得当前路径
++    local cur_path=$(PWD)
++    # 得到文件所在的文件夹
++    local dir_path=${file_path%/*}
++    # 跳转到文件所在的文件夹
++    if [[ ! -d $dir_path ]];then
++        echo "文件夹不存在"
++        return 1
++    fi
++    # 跳转到文件所在目录下
++    cd $dir_path
++    # 获得文件size
++    local file_size=$(ls -l ${file_path##*/} | awk '{print $5}')
++    echo "下载文件的大小:$file_size"
++    min_size=$((1024*1))
++    # 判断文件大小,小于1k则认为脚本下载失败
++    if [[ $file_size -lt $min_size ]]; then
++        cd $cur_path
++        return 1
++    fi
++    cd $cur_path
++    return 0
++}
++
++
++# 下载二进制文件，用来执行后面的命令
++# downName - 文件的名称
++# downFile - 文件的存储位置
++# reqUrl - 远端地址
++function download()
++{
++    local downName="${1}"
++    local downFile="${2}"
++    local reqUrl="${3}"
++    echo "下载${downName}..."
++    curl -so "${downFile}" "${reqUrl}" -L
++    chmod +x "${downFile}"
++    # echoFile ""
++}
++
++# 新创建文件夹，如果文件夹已存在什么也不做
++# dir - 想要创建的文件夹
++function newDirIfNeed()
++{
++    local dir="${1}"
++    if [[ ! -d "${dir}" ]]; then
++        mkdir -p "${dir}"
++    fi
++}
++
++main
+Index: core/jvm/src/Converters.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/Converters.kt b/core/jvm/src/Converters.kt
+--- a/core/jvm/src/Converters.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/Converters.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -8,88 +8,88 @@
+ /**
+  * Converts this [kotlinx.datetime.Instant][Instant] value to a [java.time.Instant][java.time.Instant] value.
+  */
+-public fun Instant.toJavaInstant(): java.time.Instant = this.value
++public fun Instant.toJavaInstant(): org.threeten.bp.Instant = this.value
+ 
+ /**
+  * Converts this [java.time.Instant][java.time.Instant] value to a [kotlinx.datetime.Instant][Instant] value.
+  */
+-public fun java.time.Instant.toKotlinInstant(): Instant = Instant(this)
++public fun org.threeten.bp.Instant.toKotlinInstant(): Instant = Instant(this)
+ 
+ 
+ /**
+  * Converts this [kotlinx.datetime.LocalDateTime][LocalDateTime] value to a [java.time.LocalDateTime][java.time.LocalDateTime] value.
+  */
+-public fun LocalDateTime.toJavaLocalDateTime(): java.time.LocalDateTime = this.value
++public fun LocalDateTime.toJavaLocalDateTime(): org.threeten.bp.LocalDateTime = this.value
+ 
+ /**
+  * Converts this [java.time.LocalDateTime][java.time.LocalDateTime] value to a [kotlinx.datetime.LocalDateTime][LocalDateTime] value.
+  */
+-public fun java.time.LocalDateTime.toKotlinLocalDateTime(): LocalDateTime = LocalDateTime(this)
++public fun org.threeten.bp.LocalDateTime.toKotlinLocalDateTime(): LocalDateTime = LocalDateTime(this)
+ 
+ /**
+  * Converts this [kotlinx.datetime.LocalDateTime][LocalTime] value to a [java.time.LocalTime][java.time.LocalTime] value.
+  */
+-public fun LocalTime.toJavaLocalTime(): java.time.LocalTime = this.value
++public fun LocalTime.toJavaLocalTime(): org.threeten.bp.LocalTime = this.value
+ 
+ /**
+  * Converts this [java.time.LocalTime][java.time.LocalTime] value to a [kotlinx.datetime.LocalTime][LocalTime] value.
+  */
+-public fun java.time.LocalTime.toKotlinLocalTime(): LocalTime = LocalTime(this)
++public fun org.threeten.bp.LocalTime.toKotlinLocalTime(): LocalTime = LocalTime(this)
+ 
+ 
+ /**
+  * Converts this [kotlinx.datetime.LocalDate][LocalDate] value to a [java.time.LocalDate][java.time.LocalDate] value.
+  */
+-public fun LocalDate.toJavaLocalDate(): java.time.LocalDate = this.value
++public fun LocalDate.toJavaLocalDate(): org.threeten.bp.LocalDate = this.value
+ 
+ /**
+  * Converts this [java.time.LocalDate][java.time.LocalDate] value to a [kotlinx.datetime.LocalDate][LocalDate] value.
+  */
+-public fun java.time.LocalDate.toKotlinLocalDate(): LocalDate = LocalDate(this)
++public fun org.threeten.bp.LocalDate.toKotlinLocalDate(): LocalDate = LocalDate(this)
+ 
+ 
+ /**
+  * Converts this [kotlinx.datetime.DatePeriod][DatePeriod] value to a [java.time.Period][java.time.Period] value.
+  */
+-public fun DatePeriod.toJavaPeriod(): java.time.Period = java.time.Period.of(this.years, this.months, this.days)
++public fun DatePeriod.toJavaPeriod(): org.threeten.bp.Period = org.threeten.bp.Period.of(this.years, this.months, this.days)
+ 
+ /**
+  * Converts this [java.time.Period][java.time.Period] value to a [kotlinx.datetime.DatePeriod][DatePeriod] value.
+  */
+-public fun java.time.Period.toKotlinDatePeriod(): DatePeriod = DatePeriod(this.years, this.months, this.days)
++public fun org.threeten.bp.Period.toKotlinDatePeriod(): DatePeriod = DatePeriod(this.years, this.months, this.days)
+ 
+ 
+ /**
+  * Converts this [kotlinx.datetime.TimeZone][TimeZone] value to a [java.time.ZoneId][java.time.ZoneId] value.
+  */
+-public fun TimeZone.toJavaZoneId(): java.time.ZoneId = this.zoneId
++public fun TimeZone.toJavaZoneId(): org.threeten.bp.ZoneId = this.zoneId
+ 
+ /**
+  * Converts this [java.time.ZoneId][java.time.ZoneId] value to a [kotlinx.datetime.TimeZone][TimeZone] value.
+  */
+-public fun java.time.ZoneId.toKotlinTimeZone(): TimeZone = TimeZone.ofZone(this)
++public fun org.threeten.bp.ZoneId.toKotlinTimeZone(): TimeZone = TimeZone.ofZone(this)
+ 
+ 
+ /**
+  * Converts this [kotlinx.datetime.FixedOffsetTimeZone][FixedOffsetTimeZone] value to a [java.time.ZoneOffset][java.time.ZoneOffset] value.
+  */
+-public fun FixedOffsetTimeZone.toJavaZoneOffset(): java.time.ZoneOffset = this.offset.zoneOffset
++public fun FixedOffsetTimeZone.toJavaZoneOffset(): org.threeten.bp.ZoneOffset = this.offset.zoneOffset
+ 
+ /**
+  * Converts this [java.time.ZoneOffset][java.time.ZoneOffset] value to a [kotlinx.datetime.FixedOffsetTimeZone][FixedOffsetTimeZone] value.
+  */
+-public fun java.time.ZoneOffset.toKotlinFixedOffsetTimeZone(): FixedOffsetTimeZone = FixedOffsetTimeZone(UtcOffset(this))
++public fun org.threeten.bp.ZoneOffset.toKotlinFixedOffsetTimeZone(): FixedOffsetTimeZone = FixedOffsetTimeZone(UtcOffset(this))
+ 
+ @Deprecated("Use toKotlinFixedOffsetTimeZone() instead.", ReplaceWith("this.toKotlinFixedOffsetTimeZone()"))
+-public fun java.time.ZoneOffset.toKotlinZoneOffset(): FixedOffsetTimeZone = toKotlinFixedOffsetTimeZone()
++public fun org.threeten.bp.ZoneOffset.toKotlinZoneOffset(): FixedOffsetTimeZone = toKotlinFixedOffsetTimeZone()
+ 
+ /**
+  * Converts this [kotlinx.datetime.UtcOffset][UtcOffset] value to a [java.time.ZoneOffset][java.time.ZoneOffset] value.
+  */
+-public fun UtcOffset.toJavaZoneOffset(): java.time.ZoneOffset = this.zoneOffset
++public fun UtcOffset.toJavaZoneOffset(): org.threeten.bp.ZoneOffset = this.zoneOffset
+ 
+ /**
+  * Converts this [java.time.ZoneOffset][java.time.ZoneOffset] value to a [kotlinx.datetime.UtcOffset][UtcOffset] value.
+  */
+-public fun java.time.ZoneOffset.toKotlinUtcOffset(): UtcOffset = UtcOffset(this)
++public fun org.threeten.bp.ZoneOffset.toKotlinUtcOffset(): UtcOffset = UtcOffset(this)
+ 
+Index: core/jvm/src/Instant.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/Instant.kt b/core/jvm/src/Instant.kt
+--- a/core/jvm/src/Instant.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/Instant.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -11,15 +11,15 @@
+ import kotlinx.datetime.internal.*
+ import kotlinx.datetime.serializers.InstantIso8601Serializer
+ import kotlinx.serialization.Serializable
+-import java.time.DateTimeException
+-import java.time.format.DateTimeParseException
+-import java.time.temporal.ChronoUnit
++import org.threeten.bp.DateTimeException
++import org.threeten.bp.format.DateTimeParseException
++import org.threeten.bp.temporal.ChronoUnit
+ import kotlin.time.*
+ import kotlin.time.Duration.Companion.nanoseconds
+ import kotlin.time.Duration.Companion.seconds
+-import java.time.Instant as jtInstant
+-import java.time.OffsetDateTime as jtOffsetDateTime
+-import java.time.Clock as jtClock
++import org.threeten.bp.Instant as jtInstant
++import org.threeten.bp.OffsetDateTime as jtOffsetDateTime
++import org.threeten.bp.Clock as jtClock
+ 
+ @Serializable(with = InstantIso8601Serializer::class)
+ public actual class Instant internal constructor(internal val value: jtInstant) : Comparable<Instant> {
+@@ -32,7 +32,7 @@
+     public actual fun toEpochMilliseconds(): Long = try {
+         value.toEpochMilli()
+     } catch (e: ArithmeticException) {
+-        if (value.isAfter(java.time.Instant.EPOCH)) Long.MAX_VALUE else Long.MIN_VALUE
++        if (value.isAfter(jtInstant.EPOCH)) Long.MAX_VALUE else Long.MIN_VALUE
+     }
+ 
+     public actual operator fun plus(duration: Duration): Instant = duration.toComponents { seconds, nanoseconds ->
+@@ -114,7 +114,7 @@
+     }
+ }
+ 
+-private fun Instant.atZone(zone: TimeZone): java.time.ZonedDateTime = try {
++private fun Instant.atZone(zone: TimeZone): org.threeten.bp.ZonedDateTime = try {
+     value.atZone(zone.zoneId)
+ } catch (e: DateTimeException) {
+     throw DateTimeArithmeticException(e)
+Index: core/jvm/src/LocalDate.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/LocalDate.kt b/core/jvm/src/LocalDate.kt
+--- a/core/jvm/src/LocalDate.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/LocalDate.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -11,10 +11,10 @@
+ import kotlinx.datetime.internal.*
+ import kotlinx.datetime.serializers.LocalDateIso8601Serializer
+ import kotlinx.serialization.Serializable
+-import java.time.DateTimeException
+-import java.time.format.DateTimeParseException
+-import java.time.temporal.ChronoUnit
+-import java.time.LocalDate as jtLocalDate
++import org.threeten.bp.DateTimeException
++import org.threeten.bp.format.DateTimeParseException
++import org.threeten.bp.temporal.ChronoUnit
++import org.threeten.bp.LocalDate as jtLocalDate
+ 
+ @Serializable(with = LocalDateIso8601Serializer::class)
+ public actual class LocalDate internal constructor(internal val value: jtLocalDate) : Comparable<LocalDate> {
+@@ -103,13 +103,13 @@
+             throw DateTimeArithmeticException("The result of adding $value of $unit to $this is out of LocalDate range.", e)
+         }
+ 
+-private val minEpochDay = java.time.LocalDate.MIN.toEpochDay()
+-private val maxEpochDay = java.time.LocalDate.MAX.toEpochDay()
+-private fun ofEpochDayChecked(epochDay: Long): java.time.LocalDate {
++private val minEpochDay = org.threeten.bp.LocalDate.MIN.toEpochDay()
++private val maxEpochDay = org.threeten.bp.LocalDate.MAX.toEpochDay()
++private fun ofEpochDayChecked(epochDay: Long): org.threeten.bp.LocalDate {
+     // LocalDate.ofEpochDay doesn't actually check that the argument doesn't overflow year calculation
+     if (epochDay !in minEpochDay..maxEpochDay)
+         throw DateTimeException("The resulting day $epochDay is out of supported LocalDate range.")
+-    return java.time.LocalDate.ofEpochDay(epochDay)
++    return org.threeten.bp.LocalDate.ofEpochDay(epochDay)
+ }
+ 
+ public actual operator fun LocalDate.plus(period: DatePeriod): LocalDate = try {
+Index: core/jvm/src/LocalDateTime.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/LocalDateTime.kt b/core/jvm/src/LocalDateTime.kt
+--- a/core/jvm/src/LocalDateTime.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/LocalDateTime.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -8,12 +8,12 @@
+ import kotlinx.datetime.format.*
+ import kotlinx.datetime.serializers.LocalDateTimeIso8601Serializer
+ import kotlinx.serialization.Serializable
+-import java.time.DateTimeException
+-import java.time.format.DateTimeParseException
+-import java.time.LocalDateTime as jtLocalDateTime
++import org.threeten.bp.DateTimeException
++import org.threeten.bp.format.DateTimeParseException
++import org.threeten.bp.LocalDateTime as jtLocalDateTime
+ 
+-public actual typealias Month = java.time.Month
+-public actual typealias DayOfWeek = java.time.DayOfWeek
++public actual typealias Month = org.threeten.bp.Month
++public actual typealias DayOfWeek = org.threeten.bp.DayOfWeek
+ 
+ @Serializable(with = LocalDateTimeIso8601Serializer::class)
+ public actual class LocalDateTime internal constructor(internal val value: jtLocalDateTime) : Comparable<LocalDateTime> {
+Index: core/jvm/src/LocalTime.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/LocalTime.kt b/core/jvm/src/LocalTime.kt
+--- a/core/jvm/src/LocalTime.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/LocalTime.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -10,9 +10,9 @@
+ import kotlinx.datetime.internal.*
+ import kotlinx.datetime.serializers.LocalTimeIso8601Serializer
+ import kotlinx.serialization.Serializable
+-import java.time.DateTimeException
+-import java.time.format.DateTimeParseException
+-import java.time.LocalTime as jtLocalTime
++import org.threeten.bp.DateTimeException
++import org.threeten.bp.format.DateTimeParseException
++import org.threeten.bp.LocalTime as jtLocalTime
+ 
+ @Serializable(with = LocalTimeIso8601Serializer::class)
+ public actual class LocalTime internal constructor(internal val value: jtLocalTime) :
+Index: core/jvm/src/TimeZoneJvm.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/TimeZoneJvm.kt b/core/jvm/src/TimeZoneJvm.kt
+--- a/core/jvm/src/TimeZoneJvm.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/TimeZoneJvm.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -10,9 +10,9 @@
+ 
+ import kotlinx.datetime.serializers.*
+ import kotlinx.serialization.Serializable
+-import java.time.DateTimeException
+-import java.time.ZoneId
+-import java.time.ZoneOffset as jtZoneOffset
++import org.threeten.bp.DateTimeException
++import org.threeten.bp.ZoneId
++import org.threeten.bp.ZoneOffset as jtZoneOffset
+ 
+ @Serializable(with = TimeZoneSerializer::class)
+ public actual open class TimeZone internal constructor(internal val zoneId: ZoneId) {
+@@ -77,13 +77,13 @@
+         zoneId.rules.getOffset(instant.value).let(::UtcOffset)
+ 
+ public actual fun Instant.toLocalDateTime(timeZone: TimeZone): LocalDateTime = try {
+-    java.time.LocalDateTime.ofInstant(this.value, timeZone.zoneId).let(::LocalDateTime)
++    org.threeten.bp.LocalDateTime.ofInstant(this.value, timeZone.zoneId).let(::LocalDateTime)
+ } catch (e: DateTimeException) {
+     throw DateTimeArithmeticException(e)
+ }
+ 
+ internal actual fun Instant.toLocalDateTime(offset: UtcOffset): LocalDateTime = try {
+-    java.time.LocalDateTime.ofInstant(this.value, offset.zoneOffset).let(::LocalDateTime)
++    org.threeten.bp.LocalDateTime.ofInstant(this.value, offset.zoneOffset).let(::LocalDateTime)
+ } catch (e: DateTimeException) {
+     throw DateTimeArithmeticException(e)
+ }
+Index: core/jvm/src/UtcOffsetJvm.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/jvm/src/UtcOffsetJvm.kt b/core/jvm/src/UtcOffsetJvm.kt
+--- a/core/jvm/src/UtcOffsetJvm.kt	(revision e5432035c0fe95ad045ef42ab7f55729601ef1f0)
++++ b/core/jvm/src/UtcOffsetJvm.kt	(revision 5eb2ef0a9811c1be7f77df146c9e626d00cefcf5)
+@@ -8,10 +8,10 @@
+ import kotlinx.datetime.format.*
+ import kotlinx.datetime.serializers.UtcOffsetSerializer
+ import kotlinx.serialization.Serializable
+-import java.time.DateTimeException
+-import java.time.ZoneOffset
+-import java.time.format.DateTimeFormatterBuilder
+-import java.time.format.*
++import org.threeten.bp.DateTimeException
++import org.threeten.bp.ZoneOffset
++import org.threeten.bp.format.DateTimeFormatterBuilder
++import org.threeten.bp.format.*
+ 
+ @Serializable(with = UtcOffsetSerializer::class)
+ public actual class UtcOffset(internal val zoneOffset: ZoneOffset) {
+Index: com_raft.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/com_raft.yaml b/com_raft.yaml
+new file mode 100644
+--- /dev/null	(revision e40eb693ebc30d0054dbd85e423b17612eb0926b)
++++ b/com_raft.yaml	(revision e40eb693ebc30d0054dbd85e423b17612eb0926b)
+@@ -0,0 +1,17 @@
++name: kotlinx-datetime                # 组件英文名，必填，纯英文不允许带空格
++displayName: "跨端日期库"     # 组件展示名，选填，填写后替代英文名进行展示
++version: 0.6.5-kn                 # 组件版本，必填
++apiVersion: npm/v1
++platform: kuikly
++summary: "跨端日期库"                              # 组件介绍摘要，必填，用于市场首页展示
++description: "跨端日期库，提供日期的能力"                 # 组件详细介绍，必填，用于组件详情页展示
++team: "终端平台功能组"                                          # 团队名称，必填，用于市场团队展示，由上架业务团队自行定义即可
++kotlin: 2.0.21-dev-107                                       # 组件的kotlin版本环境
++kuiklyType: "KMP"                                             # 官方KMP组件或者是Kuikly组件,kuikly组件包含自定义module和自定义view两种类别
++kuiklyTarget:                                                 # 以下字段标识组件可运行的平台
++  - android                                                   # 组件是否支持Android端运行
++  - iOS                                                       # 组件是否支持iOS端运行
++  - ohosNative                                                # 支持native产物在鸿蒙上运行
++owner:                                                        # 负责人
++  - woodyjjli
++  - haibarawang
+\ No newline at end of file
+diff --git a/.gitmodules b/.gitmodules
+deleted file mode 100644
+index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+

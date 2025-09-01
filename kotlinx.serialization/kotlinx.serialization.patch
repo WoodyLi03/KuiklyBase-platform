@@ -1,0 +1,1171 @@
+Subject: [PATCH] 修改发布信息，发布开源 1.7.1-KBA-001 版本
+---
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision d2f7316e8a8b0292a797b237a80a95e9fcd5f9b2)
++++ b/.gitignore	(revision 657442eb105ae25dd3a8f2cb874ba6692c4807b1)
+@@ -20,3 +20,5 @@
+ 
+ # benchmarks.jar
+ /benchmarks.jar
++/local.properties
++.kotlin
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision d2f7316e8a8b0292a797b237a80a95e9fcd5f9b2)
++++ b/build.gradle	(revision 657442eb105ae25dd3a8f2cb874ba6692c4807b1)
+@@ -9,10 +9,19 @@
+      * kotlin_version - kotlin version to use
+      * kotlin_language_version - LV to use
+      */
++    def isIosTargetPlatform = project.hasProperty("targetPlatform") &&
++            project.property("targetPlatform") == "iOS"
++    def isIosTargetTask = gradle.startParameter.taskNames.any { taskName ->
++        taskName.contains("podPublish") || taskName.contains("podspec") || taskName.contains("syncFramework")
++    }
++    def kotlin_beta = isIosTargetPlatform || isIosTargetTask
++            ? rootProject.properties["kotlin_ios_version"]
++            : rootProject.properties["kotlin.version"]
++    println("kotlin_beta: $kotlin_beta")
+     ext.snapshotRepoUrl = rootProject.properties["kotlin_repo_url"]
+     ext.kotlin_lv_override = rootProject.properties["kotlin_language_version"]
+     if (snapshotRepoUrl != null && snapshotRepoUrl != "") {
+-        ext.kotlin_version = rootProject.properties["kotlin_version"]
++        ext.kotlin_version = kotlin_beta
+         repositories {
+             maven { url snapshotRepoUrl }
+         }
+@@ -20,7 +29,7 @@
+         ext.kotlin_version = property('kotlin.version.snapshot')
+         ext["kotlin.native.home"] = System.getenv("KONAN_LOCAL_DIST")
+     } else {
+-        ext.kotlin_version = property('kotlin.version')
++        ext.kotlin_version = kotlin_beta
+     }
+     if (project.hasProperty("library.version")) {
+         ext.overriden_version = property('library.version')
+@@ -61,7 +70,16 @@
+     }
+ 
+     repositories {
++        maven { url "https://mirrors.tencent.com/repository/maven/tmm-snapshot" }
+         maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev' }
++        maven { url "https://mirrors.tencent.com/repository/maven/tmm-snapshot" }
++        maven { url "https://mirrors.tencent.com/repository/maven/tencentvideo" }
++        maven { url "https://mirrors.tencent.com/repository/maven/thirdparty" }
++        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
++        maven { url "https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot" }
++        maven { url "https://mirrors.tencent.com/repository/maven/thirdparty-snapshots" }
++        maven { url "https://mirrors.tencent.com/repository/maven/tencent_public" }
++        maven { url "https://maven.oa.com/nexus/content/groups/androidbuild/" }
+         // kotlin-dev with space redirector
+         maven { url "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev" }
+         mavenCentral()
+@@ -80,8 +98,8 @@
+     }
+ 
+     dependencies {
+-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
++        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_beta"
++        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_beta"
+         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
+         classpath "org.jetbrains.kotlinx:kover:$kover_version"
+         classpath "org.jetbrains.kotlinx:binary-compatibility-validator:$validator_version"
+@@ -95,9 +113,17 @@
+         classpath "me.champeau.jmh:jmh-gradle-plugin:0.6.6"
+     }
+ }
++def isIosTargetPlatform = project.hasProperty("targetPlatform") &&
++        project.property("targetPlatform") == "iOS"
++def isIosTargetTask = gradle.startParameter.taskNames.any { taskName ->
++    taskName.contains("podPublish") || taskName.contains("podspec") || taskName.contains("syncFramework")
++}
++def kotlin_beta = isIosTargetPlatform || isIosTargetTask
++        ? rootProject.properties["kotlin_ios_version"]
++        : rootProject.properties["kotlin.version"]
+ 
+ // To make it visible for compiler-version.gradle
+-ext.compilerVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
++ext.compilerVersion = kotlin_beta
+ ext.nativeDebugBuild = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG
+ 
+ apply plugin: 'binary-compatibility-validator'
+@@ -158,8 +184,17 @@
+     }
+ 
+     repositories {
++        maven { url "https://mirrors.tencent.com/repository/maven/tmm-snapshot" }
+         mavenCentral()
+         maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev' }
++        maven { url "https://mirrors.tencent.com/repository/maven/tmm-snapshot" }
++        maven { url "https://mirrors.tencent.com/repository/maven/tencentvideo" }
++        maven { url "https://mirrors.tencent.com/repository/maven/thirdparty" }
++        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
++        maven { url "https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot" }
++        maven { url "https://mirrors.tencent.com/repository/maven/thirdparty-snapshots" }
++        maven { url "https://mirrors.tencent.com/repository/maven/tencent_public" }
++        maven { url "https://maven.oa.com/nexus/content/groups/androidbuild/" }
+         // kotlin-dev with space redirector
+         maven { url "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev" }
+         // For Dokka that depends on kotlinx-html
+@@ -170,10 +205,22 @@
+     }
+ 
+     tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile).configureEach {
+-        compilerOptions { freeCompilerArgs.add("-Xpartial-linkage-loglevel=ERROR") }
++        compilerOptions {
++            freeCompilerArgs.add("-Xpartial-linkage-loglevel=ERROR")
++            freeCompilerArgs.add("-Werror=false")
++        }
+     }
+     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile).configureEach {
+-        compilerOptions { freeCompilerArgs.add("-Xpartial-linkage-loglevel=ERROR") }
++        compilerOptions {
++            freeCompilerArgs.add("-Xpartial-linkage-loglevel=ERROR")
++            freeCompilerArgs.add("-Werror=false")
++        }
++    }
++    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile).configureEach {
++        compilerOptions {
++            freeCompilerArgs.add("-Xpartial-linkage-loglevel=ERROR")
++            freeCompilerArgs.add("-Werror=false")
++        }
+     }
+ }
+ 
+Index: buildSrc/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/buildSrc/build.gradle.kts b/buildSrc/build.gradle.kts
+--- a/buildSrc/build.gradle.kts	(revision d2f7316e8a8b0292a797b237a80a95e9fcd5f9b2)
++++ b/buildSrc/build.gradle.kts	(revision c09450d1e9900563ed43fd7c44b90b98fcab97f9)
+@@ -10,6 +10,7 @@
+ }
+ 
+ repositories {
++    maven("https://mirrors.tencent.com/repository/maven/tmm-snapshot")
+     mavenCentral()
+     mavenLocal()
+     if (project.hasProperty("kotlin_repo_url")) {
+@@ -17,6 +18,14 @@
+     }
+     // kotlin-dev with space redirector
+     maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
++    maven(url = "https://mirrors.tencent.com/repository/maven/tmm-snapshot")
++    maven(url = "https://mirrors.tencent.com/repository/maven/tencentvideo")
++    maven(url = "https://mirrors.tencent.com/repository/maven/thirdparty")
++    maven(url = "https://mirrors.tencent.com/nexus/repository/maven-public/")
++    maven(url = "https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
++    maven(url = "https://mirrors.tencent.com/repository/maven/thirdparty-snapshots")
++    maven(url = "https://mirrors.tencent.com/repository/maven/tencent_public")
++    maven(url = "https://maven.oa.com/nexus/content/groups/androidbuild/")
+ }
+ 
+ val kotlinVersion = run {
+Index: buildSrc/src/main/kotlin/Publishing.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/buildSrc/src/main/kotlin/Publishing.kt b/buildSrc/src/main/kotlin/Publishing.kt
+--- a/buildSrc/src/main/kotlin/Publishing.kt	(revision d2f7316e8a8b0292a797b237a80a95e9fcd5f9b2)
++++ b/buildSrc/src/main/kotlin/Publishing.kt	(revision 8643e3a9b55608d3bd1dcf550546fd75c462753a)
+@@ -46,20 +46,21 @@
+ 
+ fun mavenRepositoryUri(): URI {
+     // TODO -SNAPSHOT detection can be made here as well
+-    val repositoryId: String? = System.getenv("libs.repository.id")
+-    return if (repositoryId == null) {
+-        URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+-    } else {
+-        URI("https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId")
+-    }
++//    val repositoryId: String? = System.getenv("libs.repository.id")
++//    return if (repositoryId == null) {
++//        URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
++//    } else {
++//        URI("https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId")
++//    }
++    return URI("https://mirrors.tencent.com/repository/maven/tencentvideo-snapshot")
+ }
+ 
+ fun configureMavenPublication(rh: RepositoryHandler, project: Project) {
+     rh.maven {
+-        url = mavenRepositoryUri()
++        url = URI("xxxxx")
+         credentials {
+-            username = project.getSensitiveProperty("libs.sonatype.user")
+-            password = project.getSensitiveProperty("libs.sonatype.password")
++            username = "xxxxx"
++            password = "xxxxx"
+         }
+     }
+ }
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle.properties b/gradle.properties
+--- a/gradle.properties	(revision d2f7316e8a8b0292a797b237a80a95e9fcd5f9b2)
++++ b/gradle.properties	(revision 8643e3a9b55608d3bd1dcf550546fd75c462753a)
+@@ -3,9 +3,10 @@
+ #
+ 
+ group=org.jetbrains.kotlinx
+-version=1.6.4-SNAPSHOT
++version=1.7.1-KBA-001
+ 
+-kotlin.version=1.9.22
++kotlin.version=2.0.21-dev-107
++kotlin_ios_version=2.0.21-deviOS-105
+ 
+ # This version takes precedence if 'bootstrap' property passed to project
+ kotlin.version.snapshot=2.0.255-SNAPSHOT
+@@ -20,7 +21,7 @@
+ # Only for tests
+ coroutines_version=1.6.4
+ kover_version=0.4.2
+-okio_version=3.6.0
++okio_version=3.9.7-kn
+ 
+ kover.enabled=true
+ 
+@@ -29,7 +30,10 @@
+ 
+ #kotlin.native.jvmArgs=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007
+ #kotlin.native.disableCompilerDaemon=true
++#TARGET_PLATFORM=IOS
++#targetPlatform=iOS
+ 
+ kotlin.native.distribution.type=prebuilt
++kotlin.build.disable.werror=true
+ 
+ org.gradle.jvmargs="-XX:+HeapDumpOnOutOfMemoryError"
+Index: gradle/native-targets.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/native-targets.gradle b/gradle/native-targets.gradle
+--- a/gradle/native-targets.gradle	(revision da90ba4eb1715c71e7e83a6debe510521a968702)
++++ b/gradle/native-targets.gradle	(revision 3c63b3884bf83413d937b0fa077a8b386bd3494f)
+@@ -10,6 +10,7 @@
+     applyDefaultHierarchyTemplate {
+ 
+         // According to https://kotlinlang.org/docs/native-target-support.html
++        ohosArm64()
+         // Tier 1
+         macosX64()
+         macosArm64()
+Index: core/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/build.gradle b/core/build.gradle
+--- a/core/build.gradle	(revision f2d71c378cfc488076dd69ac673746e1c87ce70e)
++++ b/core/build.gradle	(revision 98da77c1aa7d411ee1205c93ce0d1a3e4fed6c6f)
+@@ -70,3 +70,4 @@
+ tasks.withType(org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink.class).configureEach {
+     kotlinOptions.freeCompilerArgs += "-Xwasm-enable-array-range-checks"
+ }
++
+Index: com_raft.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/com_raft.yaml b/com_raft.yaml
+new file mode 100644
+--- /dev/null	(revision 8cc87de104976ac943371b7a1e8416fe3ca65f57)
++++ b/com_raft.yaml	(revision 8cc87de104976ac943371b7a1e8416fe3ca65f57)
+@@ -0,0 +1,17 @@
++name: kotlinx.serialization                # 组件英文名，必填，纯英文不允许带空格
++displayName: "跨端序列化库"     # 组件展示名，选填，填写后替代英文名进行展示
++version: 1.6.9-kn                  # 组件版本，必填
++apiVersion: npm/v1
++platform: kuikly
++summary: "跨端序列化库"                              # 组件介绍摘要，必填，用于市场首页展示
++description: "跨端序列化库，提供序列化的能力"                 # 组件详细介绍，必填，用于组件详情页展示
++team: "终端平台功能组"                                          # 团队名称，必填，用于市场团队展示，由上架业务团队自行定义即可
++kotlin: 2.0.21-dev-107                                       # 组件的kotlin版本环境
++kuiklyType: "KMP"                                             # 官方KMP组件或者是Kuikly组件,kuikly组件包含自定义module和自定义view两种类别
++kuiklyTarget:                                                 # 以下字段标识组件可运行的平台
++  - android                                                   # 组件是否支持Android端运行
++  - iOS                                                       # 组件是否支持iOS端运行
++  - ohosNative                                                # 支持native产物在鸿蒙上运行
++owner:                                                        # 负责人
++  - woodyjjli
++  - haibarawang
+\ No newline at end of file
+Index: formats/json/androidNativeMain/src/com/tencent/tmm/platform/ExceptionManager.androidNative.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/androidNativeMain/src/com/tencent/tmm/platform/ExceptionManager.androidNative.kt b/formats/json/androidNativeMain/src/com/tencent/tmm/platform/ExceptionManager.androidNative.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/androidNativeMain/src/com/tencent/tmm/platform/ExceptionManager.androidNative.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/commonMain/src/com/tencent/tmm/platform/ExceptionManager.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/commonMain/src/com/tencent/tmm/platform/ExceptionManager.kt b/formats/json/commonMain/src/com/tencent/tmm/platform/ExceptionManager.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/commonMain/src/com/tencent/tmm/platform/ExceptionManager.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,39 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++
++internal fun throwJsonDecodingExceptionImpl(
++    message: String,
++    position: Int,
++    hint: String = "",
++    path: JsonPath,
++    source: CharSequence,
++): Nothing {
++    val hintMessage = if (hint.isEmpty()) "" else "\n$hint"
++    throw JsonDecodingException(
++        position,
++        message + " at path: " + path.getPath() + hintMessage,
++        source
++    )
++}
++
++@Throws(JsonDecodingException::class)
++internal expect fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String = "",
++    path: JsonPath,
++    source: CharSequence
++): Nothing
+\ No newline at end of file
+Index: formats/json/commonMain/src/com/tencent/tmm/platform/KNJsonLog.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/commonMain/src/com/tencent/tmm/platform/KNJsonLog.kt b/formats/json/commonMain/src/com/tencent/tmm/platform/KNJsonLog.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/commonMain/src/com/tencent/tmm/platform/KNJsonLog.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,90 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: serialization初始化任务，包含日志注入，以及鸿蒙平台double/float转换无exception的注入
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++
++
++public object KKJsonInitTask {
++    public fun init(logImpl: IKNJsonLog?, convertImpl: IKNConvertInterface) {
++        KNJsonLog.logImpl = logImpl
++        KNConvertDelegate.convertImpl = convertImpl
++    }
++}
++
++internal object KNConvertDelegate {
++    internal var convertImpl: IKNConvertInterface? = null
++
++    internal fun fastToDoubleOrNull(string: String): Double? {
++        if (convertImpl == null) {
++            return string.toDoubleOrNull()
++        }
++        return convertImpl?.fastToDoubleOrNull(string)
++    }
++
++    internal fun fastToFloatOrNull(string: String): Float? {
++        if (convertImpl == null) {
++            return string.toFloatOrNull()
++        }
++        return convertImpl?.fastToFloatOrNull(string)
++    }
++}
++
++
++public interface IKNConvertInterface {
++    public fun fastToDoubleOrNull(string: String): Double?
++    public fun fastToFloatOrNull(string: String): Float?
++}
++
++internal object KNJsonLog {
++    internal var logImpl: IKNJsonLog? = null
++
++    internal fun d(tag: String?, content: String?) {
++        logImpl?.d("[$tag]", content)
++    }
++
++    internal fun i(tag: String?, content: String?) {
++        logImpl?.i("[$tag]", content)
++    }
++
++    internal fun e(tag: String?, content: String?, throwable: Throwable? = null) {
++        logImpl?.e("[$tag]", content, throwable)
++    }
++}
++
++
++public interface IKNJsonLog {
++
++    /**
++     * Debug 级别日志输出
++     *
++     * @param tag     tag
++     * @param content 日志内容
++     */
++    public fun d(tag: String?, content: String?)
++
++    /**
++     * Info 级别日志输出
++     *
++     * @param tag     tag
++     * @param content 日志内容
++     */
++    public fun i(tag: String?, content: String?)
++
++    /**
++     * Error 级别日志输出
++     *
++     * @param tag     tag
++     * @param content 日志内容
++     */
++    public fun e(tag: String?, content: String?, throwable: Throwable? = null)
++
++}
+\ No newline at end of file
+Index: formats/json/commonMain/src/kotlinx/serialization/json/internal/lexer/AbstractJsonLexer.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/commonMain/src/kotlinx/serialization/json/internal/lexer/AbstractJsonLexer.kt b/formats/json/commonMain/src/kotlinx/serialization/json/internal/lexer/AbstractJsonLexer.kt
+--- a/formats/json/commonMain/src/kotlinx/serialization/json/internal/lexer/AbstractJsonLexer.kt	(revision 27ce6700f889e0333e50ad5645b47be24e438117)
++++ b/formats/json/commonMain/src/kotlinx/serialization/json/internal/lexer/AbstractJsonLexer.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -4,6 +4,7 @@
+ 
+ package kotlinx.serialization.json.internal
+ 
++import com.tencent.tmm.platform.*
+ import kotlinx.serialization.json.internal.CharMappings.CHAR_TO_TOKEN
+ import kotlinx.serialization.json.internal.CharMappings.ESCAPE_2_CHAR
+ import kotlin.js.*
+@@ -594,8 +595,10 @@
+     }
+ 
+     fun fail(message: String, position: Int = currentPosition, hint: String = ""): Nothing {
+-        val hintMessage = if (hint.isEmpty()) "" else "\n$hint"
+-        throw JsonDecodingException(position, message + " at path: " + path.getPath() + hintMessage, source)
++//        val hintMessage = if (hint.isEmpty()) "" else "\n$hint"
++//        throw JsonDecodingException(position, message + " at path: " + path.getPath() + hintMessage, source)
++        // 由于鸿蒙上获取stacktrace信息比较耗时，这里区分平台实现
++        throwJsonDecodingException(message, position, hint, path, source)
+     }
+ 
+     fun consumeNumericLiteral(): Long {
+Index: formats/json/iosMain/src/com/tencent/tmm/platform/ExceptionManager.ios.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/iosMain/src/com/tencent/tmm/platform/ExceptionManager.ios.kt b/formats/json/iosMain/src/com/tencent/tmm/platform/ExceptionManager.ios.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/iosMain/src/com/tencent/tmm/platform/ExceptionManager.ios.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/jsWasmMain/src/com/tencent/tmm/platform/ExceptionManager.jsWasm.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/jsWasmMain/src/com/tencent/tmm/platform/ExceptionManager.jsWasm.kt b/formats/json/jsWasmMain/src/com/tencent/tmm/platform/ExceptionManager.jsWasm.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/jsWasmMain/src/com/tencent/tmm/platform/ExceptionManager.jsWasm.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/jvmMain/src/com/tencent/tmm/platform/ExceptionManager.jvm.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/jvmMain/src/com/tencent/tmm/platform/ExceptionManager.jvm.kt b/formats/json/jvmMain/src/com/tencent/tmm/platform/ExceptionManager.jvm.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/jvmMain/src/com/tencent/tmm/platform/ExceptionManager.jvm.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,25 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/linuxMain/src/com/tencent/tmm/platform/ExceptionManager.linux.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/linuxMain/src/com/tencent/tmm/platform/ExceptionManager.linux.kt b/formats/json/linuxMain/src/com/tencent/tmm/platform/ExceptionManager.linux.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/linuxMain/src/com/tencent/tmm/platform/ExceptionManager.linux.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.JsonDecodingException
++import kotlinx.serialization.json.internal.JsonPath
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/macosMain/src/com/tencent/tmm/platform/ExceptionManager.macos.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/macosMain/src/com/tencent/tmm/platform/ExceptionManager.macos.kt b/formats/json/macosMain/src/com/tencent/tmm/platform/ExceptionManager.macos.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/macosMain/src/com/tencent/tmm/platform/ExceptionManager.macos.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/mingwX64Main/src/com/tencent/tmm/platform/ExceptionManager.mingwX64.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/mingwX64Main/src/com/tencent/tmm/platform/ExceptionManager.mingwX64.kt b/formats/json/mingwX64Main/src/com/tencent/tmm/platform/ExceptionManager.mingwX64.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/mingwX64Main/src/com/tencent/tmm/platform/ExceptionManager.mingwX64.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,25 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/ohosArm64Main/src/com/tencent/tmm/platform/ExceptionManager.ohosArm64.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/ohosArm64Main/src/com/tencent/tmm/platform/ExceptionManager.ohosArm64.kt b/formats/json/ohosArm64Main/src/com/tencent/tmm/platform/ExceptionManager.ohosArm64.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/ohosArm64Main/src/com/tencent/tmm/platform/ExceptionManager.ohosArm64.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,34 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++internal val globalJsonDecodingException =
++    JsonDecodingException("Due to the long time consumption when retrieving the stack trace in HarmonyOS, a global exception handling mechanism is used here. Please refer to the logs for detailed error information.")
++
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    val hintMessage = if (hint.isEmpty()) "" else "\n$hint"
++    val errorMessage = message + " at path: " + path.getPath() + hintMessage
++    val log =
++        if (position >= 0) "Unexpected JSON token at offset $position: $errorMessage" else errorMessage
++    KNJsonLog.e("ThrowJsonDecodingException", log)
++    throw globalJsonDecodingException
++}
+\ No newline at end of file
+Index: formats/json/tvosMain/src/com/tencent/tmm/platform/ExceptionManager.tvos.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/tvosMain/src/com/tencent/tmm/platform/ExceptionManager.tvos.kt b/formats/json/tvosMain/src/com/tencent/tmm/platform/ExceptionManager.tvos.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/tvosMain/src/com/tencent/tmm/platform/ExceptionManager.tvos.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/watchosMain/src/com/tencent/tmm/platform/ExceptionManager.watchos.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/watchosMain/src/com/tencent/tmm/platform/ExceptionManager.watchos.kt b/formats/json/watchosMain/src/com/tencent/tmm/platform/ExceptionManager.watchos.kt
+new file mode 100644
+--- /dev/null	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
++++ b/formats/json/watchosMain/src/com/tencent/tmm/platform/ExceptionManager.watchos.kt	(revision 5d7ab4fa268f6c7b0f4f3bcf63fc147c2bb9626d)
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++import kotlinx.serialization.json.internal.*
++import kotlinx.serialization.json.internal.JsonDecodingException
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: 由于鸿蒙平台 获取stacktrace 比较耗时，这里区分实现将鸿蒙平台的exception改成全局的
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/24
++ */
++@Throws(JsonDecodingException::class)
++internal actual fun throwJsonDecodingException(
++    message: String,
++    position: Int,
++    hint: String,
++    path: JsonPath,
++    source: CharSequence
++): Nothing {
++    throwJsonDecodingExceptionImpl(message, position, hint, path, source)
++}
+\ No newline at end of file
+Index: formats/json/androidNativeMain/src/com/tencent/tmm/platform/StringExtension.androidNative.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/androidNativeMain/src/com/tencent/tmm/platform/StringExtension.androidNative.kt b/formats/json/androidNativeMain/src/com/tencent/tmm/platform/StringExtension.androidNative.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/androidNativeMain/src/com/tencent/tmm/platform/StringExtension.androidNative.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/commonMain/src/com/tencent/tmm/platform/StringExtension.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/commonMain/src/com/tencent/tmm/platform/StringExtension.kt b/formats/json/commonMain/src/com/tencent/tmm/platform/StringExtension.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/commonMain/src/com/tencent/tmm/platform/StringExtension.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,18 @@
++/*
++ * Copyright 2017-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
++ */
++
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++
++internal expect fun String.toDoubleOrNullByPlatform(): Double?
++
++internal expect fun String.toFloatOrNullByPlatform(): Float?
+\ No newline at end of file
+Index: formats/json/commonMain/src/kotlinx/serialization/json/JsonElement.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/commonMain/src/kotlinx/serialization/json/JsonElement.kt b/formats/json/commonMain/src/kotlinx/serialization/json/JsonElement.kt
+--- a/formats/json/commonMain/src/kotlinx/serialization/json/JsonElement.kt	(revision 13b04a126cd04ee28bbde118214413398aa82ac7)
++++ b/formats/json/commonMain/src/kotlinx/serialization/json/JsonElement.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -6,6 +6,7 @@
+ 
+ package kotlinx.serialization.json
+ 
++import com.tencent.tmm.platform.*
+ import kotlinx.serialization.*
+ import kotlinx.serialization.builtins.serializer
+ import kotlinx.serialization.descriptors.SerialDescriptor
+@@ -292,7 +293,7 @@
+ /**
+  * Returns content of current element as double or `null` if current element is not a valid representation of number
+  */
+-public val JsonPrimitive.doubleOrNull: Double? get() = content.toDoubleOrNull()
++public val JsonPrimitive.doubleOrNull: Double? get() = content.toDoubleOrNullByPlatform()
+ 
+ /**
+  * Returns content of current element as float
+@@ -303,7 +304,7 @@
+ /**
+  * Returns content of current element as float or `null` if current element is not a valid representation of number
+  */
+-public val JsonPrimitive.floatOrNull: Float? get() = content.toFloatOrNull()
++public val JsonPrimitive.floatOrNull: Float? get() = content.toFloatOrNullByPlatform()
+ 
+ /**
+  * Returns content of current element as boolean
+Index: formats/json/iosMain/src/com/tencent/tmm/platform/StringExtension.ios.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/iosMain/src/com/tencent/tmm/platform/StringExtension.ios.kt b/formats/json/iosMain/src/com/tencent/tmm/platform/StringExtension.ios.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/iosMain/src/com/tencent/tmm/platform/StringExtension.ios.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/jsWasmMain/src/com/tencent/tmm/platform/StringExtension.jsWasm.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/jsWasmMain/src/com/tencent/tmm/platform/StringExtension.jsWasm.kt b/formats/json/jsWasmMain/src/com/tencent/tmm/platform/StringExtension.jsWasm.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/jsWasmMain/src/com/tencent/tmm/platform/StringExtension.jsWasm.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/jvmMain/src/com/tencent/tmm/platform/StringExtension.jvm.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/jvmMain/src/com/tencent/tmm/platform/StringExtension.jvm.kt b/formats/json/jvmMain/src/com/tencent/tmm/platform/StringExtension.jvm.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/jvmMain/src/com/tencent/tmm/platform/StringExtension.jvm.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/linuxMain/src/com/tencent/tmm/platform/StringExtension.linux.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/linuxMain/src/com/tencent/tmm/platform/StringExtension.linux.kt b/formats/json/linuxMain/src/com/tencent/tmm/platform/StringExtension.linux.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/linuxMain/src/com/tencent/tmm/platform/StringExtension.linux.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/macosMain/src/com/tencent/tmm/platform/StringExtension.macos.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/macosMain/src/com/tencent/tmm/platform/StringExtension.macos.kt b/formats/json/macosMain/src/com/tencent/tmm/platform/StringExtension.macos.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/macosMain/src/com/tencent/tmm/platform/StringExtension.macos.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/mingwX64Main/src/com/tencent/tmm/platform/StringExtension.mingwX64.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/mingwX64Main/src/com/tencent/tmm/platform/StringExtension.mingwX64.kt b/formats/json/mingwX64Main/src/com/tencent/tmm/platform/StringExtension.mingwX64.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/mingwX64Main/src/com/tencent/tmm/platform/StringExtension.mingwX64.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/ohosArm64Main/src/com/tencent/tmm/platform/StringExtension.ohosArm64.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/ohosArm64Main/src/com/tencent/tmm/platform/StringExtension.ohosArm64.kt b/formats/json/ohosArm64Main/src/com/tencent/tmm/platform/StringExtension.ohosArm64.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/ohosArm64Main/src/com/tencent/tmm/platform/StringExtension.ohosArm64.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = KNConvertDelegate.fastToDoubleOrNull(this)
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = KNConvertDelegate.fastToFloatOrNull(this)
+\ No newline at end of file
+Index: formats/json/tvosMain/src/com/tencent/tmm/platform/StringExtension.tvos.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/tvosMain/src/com/tencent/tmm/platform/StringExtension.tvos.kt b/formats/json/tvosMain/src/com/tencent/tmm/platform/StringExtension.tvos.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/tvosMain/src/com/tencent/tmm/platform/StringExtension.tvos.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
+Index: formats/json/watchosMain/src/com/tencent/tmm/platform/StringExtension.watchos.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/formats/json/watchosMain/src/com/tencent/tmm/platform/StringExtension.watchos.kt b/formats/json/watchosMain/src/com/tencent/tmm/platform/StringExtension.watchos.kt
+new file mode 100644
+--- /dev/null	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
++++ b/formats/json/watchosMain/src/com/tencent/tmm/platform/StringExtension.watchos.kt	(revision b1bf7b41eda8e7acd2b73fda01ea2f043baaa958)
+@@ -0,0 +1,13 @@
++package com.tencent.tmm.platform
++
++/**
++ * Copyright (c) 2025 Tencent. All rights reserved.
++ * 类功能描述: KotlinNative实现String.toDoubleOrNull()中会抛出异常获取堆栈，这在鸿蒙上比较耗时
++ *           这里分平台实现下，鸿蒙使用fastToDoubleOrNull(),其他使用toDoubleOrNull()
++ *
++ * @Author : woodyjjli
++ * @date : 2025/7/31
++ */
++internal actual fun String.toDoubleOrNullByPlatform(): Double? = this.toDoubleOrNull()
++
++internal actual fun String.toFloatOrNullByPlatform(): Float? = this.toFloatOrNull()
+\ No newline at end of file
