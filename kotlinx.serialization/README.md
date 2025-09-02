@@ -27,24 +27,22 @@ git apply kotlinx-serialization.patch
 
 ## 3. maven configuration
 
-Replace the following `username`, `password`, and `uri` with the corresponding published information.
+Replace the following `username`, `password`, and `url` with the corresponding published information.
 ```
-publishing {
-   repositories {
-        maven {
-            credentials {
-                username = "xxxxx"
-                password = "xxxxx"
-            }
-            url = uri("xxxxx")
+ fun configureMavenPublication(rh: RepositoryHandler, project: Project) {
+    rh.maven {
+        url = xxx
+        credentials {
+            username = xxx
+            password = xxx
         }
     }
-}    
+}
 ```
 
-and change your own kotlinx.datetime version
+and change your own kotlinx.serialization version
 ```
-version = "xxxxx"
+version = "xxx"
 ```
 
 ## 4. publish kotlinx.serialization
