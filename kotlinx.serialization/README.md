@@ -14,7 +14,7 @@ git clone https://github.com/Kotlin/kotlinx.serialization.git
 checkout tag 1.7.1 and create branch:
 
 ```
-git checkout -b v1.71. 1.71.
+git checkout -b v1.7.1. 1.7.1.
 ```
 
 ## 2. apply patch
