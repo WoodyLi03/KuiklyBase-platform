@@ -268,8 +268,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/ohosApp/timezone/oh-package-lock.json5 b/ohosApp/timezone/oh-package-lock.json5
 new file mode 100644
---- /dev/null	(date 1759201533034)
-+++ b/ohosApp/timezone/oh-package-lock.json5	(date 1759201533034)
+--- /dev/null	(date 1759203536430)
++++ b/ohosApp/timezone/oh-package-lock.json5	(date 1759203536430)
 @@ -0,0 +1,29 @@
 +{
 +  "meta": {
@@ -608,14 +608,23 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/ohosApp/timezone/readme.md b/ohosApp/timezone/readme.md
 new file mode 100644
---- /dev/null	(date 1759063951403)
-+++ b/ohosApp/timezone/readme.md	(date 1759063951403)
-@@ -0,0 +1,5 @@
+--- /dev/null	(date 1759203502941)
++++ b/ohosApp/timezone/readme.md	(date 1759203502941)
+@@ -0,0 +1,14 @@
 +# TIMEZONE
 +
 +### 简介
 +
-+datetime组件鸿蒙桥接arkTs实现
++datetime组件鸿蒙桥接arkTs实现,实现了获取当前时区/根据id获取时区/获取可用id的功能
++
++### ArkTS 接入
++
++```bash
++ohpm install @kuiklybase/timezone
++
++// 初始化
++import "@kuiklybase/timezone"
++```
 \ No newline at end of file
 Index: ohosApp/timezone/src/ohosTest/module.json5
 IDEA additional info:
@@ -1521,8 +1530,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/ohosApp/oh-package-lock.json5 b/ohosApp/oh-package-lock.json5
 new file mode 100644
---- /dev/null	(date 1759201533034)
-+++ b/ohosApp/oh-package-lock.json5	(date 1759201533034)
+--- /dev/null	(date 1759203536430)
++++ b/ohosApp/oh-package-lock.json5	(date 1759203536430)
 @@ -0,0 +1,27 @@
 +{
 +  "meta": {
@@ -1844,12 +1853,12 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/ohosApp/timezone/oh-package.json5 b/ohosApp/timezone/oh-package.json5
 new file mode 100644
---- /dev/null	(date 1759199853634)
-+++ b/ohosApp/timezone/oh-package.json5	(date 1759199853634)
+--- /dev/null	(date 1759203527090)
++++ b/ohosApp/timezone/oh-package.json5	(date 1759203527090)
 @@ -0,0 +1,11 @@
 +{
 +  "name": "@kuiklybase/timezone",
-+  "version": "1.0.0",
++  "version": "0.0.1",
 +  "description": "timezone",
 +  "main": "Index.ets",
 +  "author": "Tencent-TDS",
@@ -2024,13 +2033,13 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/ohosApp/timezone/BuildProfile.ets b/ohosApp/timezone/BuildProfile.ets
 new file mode 100644
---- /dev/null	(date 1759199512000)
-+++ b/ohosApp/timezone/BuildProfile.ets	(date 1759199512000)
+--- /dev/null	(date 1759203536608)
++++ b/ohosApp/timezone/BuildProfile.ets	(date 1759203536608)
 @@ -0,0 +1,17 @@
 +/**
 + * Use these variables when you tailor your ArkTS code. They must be of the const type.
 + */
-+export const HAR_VERSION = '1.0.0';
++export const HAR_VERSION = '0.0.1';
 +export const BUILD_MODE_NAME = 'debug';
 +export const DEBUG = true;
 +export const TARGET_NAME = 'default';
