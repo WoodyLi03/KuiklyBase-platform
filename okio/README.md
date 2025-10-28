@@ -5,7 +5,7 @@ This patch is built on the official okio version c43c9a61 to support platform Op
 # How to publish
 
 ## 1. download okio
-At first, clone offcial kotlin.coroutines project in local:
+At first, clone offcial okio project in local:
 
 ```
 git clone https://github.com/Kotlin/okio.git
